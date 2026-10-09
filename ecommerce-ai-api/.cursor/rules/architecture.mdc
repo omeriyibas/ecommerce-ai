@@ -1,0 +1,25 @@
+---
+description: API katmanları ve dil
+alwaysApply: true
+---
+
+# Mimari
+
+```
+routers / ai/graph
+  → ai/agents + toolsets
+  → services
+  → repositories
+  → models
+```
+
+- Business logic service’de; repo yalnız DB; tool SQL yazmaz
+- DTO: `api_schemas/` · agent output: `ai/ai_schemas/` · `mappers/` gerektiğinde
+- `AppDeps` (`ai/deps.py`): services + `user_id`
+- Yeni domain: model + repo + service + api_schema (+ mapper/seeder)
+- Agent/graph detayı → `pydantic-ai.mdc`; seeder → `data-layer.mdc`
+
+# Dil
+
+- Kullanıcıya dönük cevaplar Türkçe ve kısa
+- Kod/identifier İngilizce

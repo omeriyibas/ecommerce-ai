@@ -1,0 +1,15 @@
+.react-select__indicator-separator {
+  display: none
+}
+
+.react-select__option.react-select__option--is-focused {
+  color: var(--white) !important;
+}
+
+.react-select__option--is-selected {
+  background: var(--primary) !important;
+}
+
+.react-select__option.react-select__option--is-focused  {
+  background: var(--primary) !important;
+}

@@ -1,0 +1,17 @@
+---
+description: Redis — manager, keys, rate limit, token lifecycle
+globs: src/infrastructure/**/*.py
+alwaysApply: false
+---
+
+# Redis
+
+- Client/lifecycle: yalnız `redis_manager` (async); JTI/revoke/logout → `redis_store`. Yeni client / paralel blacklist-session store yok
+- Key: mevcut convention; aynı domain’e ikinci format yok. Geçici cache/security’yi permanent yapma; uygun TTL
+- List cache loop: `fingerprint` → `get_cached_list` → hit’te `model_validate` / miss → query → `model_dump(mode="json")` → `set_cached_list`; mutasyon → `invalidate_owner_lists`. Counts aynı `owner_id`
+- TTL service’te okuma; `set_cached_list` default; override `ttl_sec=`. Presigned URL içeren listeleri cache’leme (`api.mdc` S3)
+- Rate limit: mevcut `deps/rate_limit` + scope; aynı endpoint’e ikinci limiter yok; fail-open kararını koru
+- Security-critical (JTI/nonce/revoke) ≠ normal cache failure; token/revocation TTL ↔ token lifecycle (`REFRESH_DAYS` vb.)
+- Device nonce: `SET NX`+TTL; önce imza sonra tüket; fail log `ip`+`device_id`
+- Worker DB yazarsa aynı ns invalidate veya API üzerinden yaz; uzun `LIST_CACHE_TTL_SEC` yok
+- Keys: `list:{ns}:{owner}:{fp}` / `list:{ns}:idx:{owner}` · `rate_limit:{scope}:{ip}` · `device_hmac_nonce:{nonce}`

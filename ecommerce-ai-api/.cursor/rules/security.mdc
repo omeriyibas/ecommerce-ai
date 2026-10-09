@@ -1,0 +1,15 @@
+---
+description: Security — authz, secrets, injection, CORS/CSRF/XSS
+globs: src/**/*.py
+alwaysApply: false
+---
+
+# Security
+
+- Input untrusted; doğrulama server-side (`validation.mdc`). Client guard güvenlik sayılmaz
+- Least privilege; ownership / tenant / cookie / S3 detayı → `api.mdc`
+- Secret/token/password hardcode veya git’e koyma; sensitive log/response yok
+- SQL: parameterized/ORM. XSS/CSRF bağlama göre; CORS prod’da `*` yok
+- Abuse: rate limit (`redis.mdc`); auth fail → deny
+- Custom crypto / home-grown auth yok — bcrypt, PyJWT, mevcut akış
+- Dependency: `supply-chain.mdc`

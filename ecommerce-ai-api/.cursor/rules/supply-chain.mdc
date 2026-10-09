@@ -1,0 +1,12 @@
+---
+description: Dependency / supply-chain hygiene
+globs: "**/pyproject.toml,**/requirements*.txt,**/uv.lock,**/package.json,**/pnpm-lock.yaml"
+alwaysApply: false
+---
+
+# Supply chain
+
+- Lock: API `uv.lock` (`uv sync --frozen`); panel `pnpm-lock.yaml` — commit et; npm/yarn lock ekleme
+- Audit: `pip-audit` (uv export) · `pnpm audit --prod`; kritik CVE → güncelle/override
+- EOL/unmaintained yok; seed/dev runtime’a koyma (`[dependency-groups]`); bilinmeyen paketi incele
+- Patch/minor: `uv lock --upgrade` / `pnpm update`; pnpm `overrides` dikkatli

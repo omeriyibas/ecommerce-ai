@@ -1,0 +1,18 @@
+---
+description: Alembic migration kuralları
+globs: alembic/**/*,src/models/**/*.py
+alwaysApply: false
+---
+
+# Alembic
+
+Prod schema yalnız migration. History = source of truth. Async `env.py` + `settings.DATABASE_URL`; `alembic.ini` hardcode / `create_all` yok.
+
+1. Model + `models/__init__.py` → `alembic revision --autogenerate -m "anlamli_ad"`
+2. Autogenerate’i incele: beklenmeyen DROP/ALTER sil; `upgrade` açık/deterministic; `downgrade` mümkünse güvenli (data loss varsa yaz)
+3. `alembic upgrade head`
+
+- Dosya/id: `NNN_kisa`; linear chain; branch/head çoğaltma; deploy edilmiş revision’ı değiştirme → yeni revision
+- Büyük data transform’u schema migration’a gömme; schema/data ayır
+- Enum: engine davranışı, reversibility, existing data; `checkfirst=True`
+- Secret / `.env` commit yok

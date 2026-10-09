@@ -1,0 +1,16 @@
+---
+description: Server-side validation — Pydantic zorunlu
+globs: src/{api_schemas,models,routers,ai}/**/*.py
+alwaysApply: false
+---
+
+# Validation
+
+Client Zod yalnız UX; asıl doğrulama API’de.
+
+- Body → `api_schemas` Pydantic; query/path typed + bound (`ge`/`le`/`max_length`); ham `Request.json()` / untyped dict yok
+- Email → `EmailStr` + strip/lower; biçimli string → `Field(pattern=…)` / validator; liste query’ye üst sınır
+- `Field(max_length)` ≤ DB `String(n)`; limitsiz `String` (user-facing) yok
+- Sayısal iş kuralları: API `ge`/`le` + DB `CheckConstraint` (PK id hariç); migration’da bound birlikte
+- Örnek: biçimli kod / serial; serbest metin max bound; upload `deps/upload`; batch ids üst sınır
+- Server bound değişince panel schema’yı hizala

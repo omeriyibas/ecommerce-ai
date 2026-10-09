@@ -1,0 +1,56 @@
+# Docker Compose — API + Redis.
+# Postgres host'ta (.env.docker → host.docker.internal).
+#
+# Kullanım (ecommerce-ai-api/ içinden):
+#   ./scripts/run.sh
+#   ./scripts/run.sh migrate
+
+services:
+  redis:
+    image: redis:7-alpine
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    command:
+      [
+        "redis-server",
+        "--requirepass",
+        "dockerredis",
+        "--save",
+        "",
+        "--appendonly",
+        "no",
+      ]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "dockerredis", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:8000:8000"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

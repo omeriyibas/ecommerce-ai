@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.git/
+.gitignore
+.env
+.env.*
+!.env.example
+logs/
+seeds/images/
+*.md
+.cursor/

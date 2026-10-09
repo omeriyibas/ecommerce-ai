@@ -1,0 +1,29 @@
+---
+description: Disiplin + YAGNI — tahmin yok, overengineering yok
+alwaysApply: true
+---
+
+# Disiplin
+
+- Değişmeden önce ilgili kodu oku; mevcut pattern/helper’ı ara, yoksa oluştur
+- Davranış/API uydurma; lock’taki sürüm + gerekirse resmi docs
+- Layer sınırına uy; scope dışı refactor yok; istenmedikçe davranışı koru; hedefli diff
+- Explicit code; `any` / unsafe cast / type suppress yok
+- Stack yetiyorsa dependency ekleme
+
+# YAGNI
+
+- “Belki lazım” / hypothetical architecture / speculative extensibility / premature opt yok
+- Somut ihtiyaç yokken yeni Service/Repo/Factory/Manager/Helper/Wrapper/Interface/Base/Adapter/Config layer uydurma; mevcut pattern gerektiriyorsa onu kullan
+- Lokal fix’i architecture-wide / paralel mimari / stil-only rewrite yapma
+- Kullanılmadığı doğrulanmayan kodu silme
+
+# Doğrulama
+
+- Varsayılan: build / lint / typecheck / runtime / pytest koşturma; test dosyası ekleme
+- Kullanıcı “test yaz / çalıştır / doğrula” derse: mevcut convention ile yap (en küçük ilgili kapsam; full suite yalnız isterse)
+- Anlamlı API değişikliği tamamlanınca, kullanıcı daha önce test demediyse, görev sonunda **bir kez** sor: “İlgili pytest ekleyeyim ve/veya çalıştırayım mı?”
+- Sorma: typo/refactor/metin, panel, kullanıcı zaten test istediğinde, aynı görevde tekrar
+- Onay olmadan test ekleme / koşturma
+- Yeni test framework/infra kurma (panel’de suite yoksa stack kurma)
+- Çalıştırmadığın kontrolü başarılı diye raporlama

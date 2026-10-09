@@ -1,0 +1,60 @@
+---
+description: API proje kuralları
+globs: src/**/*
+alwaysApply: false
+---
+
+# API
+
+FastAPI + async SQLAlchemy + Redis.  
+`routers` (HTTP) → `services` (iş) → `repositories` (SQL) → `models`.  
+Response: mevcut `api_schemas` (+ mapper yalnız gerekliyse). Auth: `get_current_user` / mevcut deps. Commit service’te — TX ownership değiştirme.
+
+## Tenant / sahiplik
+- Kaynak tenant’ı: `core/tenant.resolve_tenant_id` (aktör türüne göre; admin→None)
+- Panel CRUD: router’da `_require_tenant_id` (None → 403); repo `get_by_id_for_tenant` / list filtreleri tenant ile
+- Admin için tenant yoksa “tüm şirket” varsayma; endpoint açıkça admin-only veya tenant zorunlu olsun
+
+## TX / repo
+- Repo: `add` + `flush` (gerekirse); `commit` / `rollback` yok
+- Service: `commit_or_integrity_conflict` veya açık `commit`/`rollback`; TX ownership service’te
+
+## http_helpers
+- 404: `require_found(..., detail=...)` — ham `if None: raise` uydurma
+- 409 (unique/duplicate): `assert_no_id_conflict`
+- Commit + IntegrityError: `commit_or_integrity_conflict` (ham DB mesajı client’a yok)
+
+## Pagination
+- Offset listeler: `page`/`per_page` zorunlu default’lu; `paginate(...)` → `PaginatedResponse`
+- Tarih-aralıklı listeler: `per_page` **yoksa** `start_date` zorunlu (yoksa 400); `end_date` yoksa aynı gün; o aralıktaki tüm kayıtlar. `per_page` varsa keyset (`decode` → `limit+1` → `encode` → `build_cursor_paginated_response`); tarih opsiyonel
+- Cursor yalnız `per_page` ile; sayfalama yokken cursor → 400
+- Tarih aralığı: `DateTimeRangeFilter` + `date_time_range_clause` (timestamp kolonu)
+- Offset/total_pages / cursor formatını elle yeniden yazma; `core/pagination` kullan
+
+## S3 / medya
+- Upload: `S3Storage.upload_*` → DB’ye **object key** (public URL değil)
+- Okuma (list/get/response): `presigned_get_url` / eşdeğeri; alan adı (`s3_url`) aynı kalabilir, değer presigned
+- Presigned dönen listeleri Redis’e koyma (TTL dolunca stale); counts cache OK
+- `S3_PRESIGN_EXPIRES_SEC`; bucket private varsay
+
+## Hata cevabı
+- Envelope: `{code, message, detail}` (+ validation’da `errors[]`) — `exception_handlers`
+- Client’a stack/SQL/`str(exc)` yok; unhandled → `"Sunucu hatası"`; prod `DEBUG=False`
+- IntegrityError → `commit_or_integrity_conflict`
+- Kritik olay: auth/admin/mutasyon — etiket `[panel]`/`[auth]`/`[device]`; secret yazma (password, API key, JWT, refresh, cookie)
+- Audit (log yeterli): actor, resource, action, time, old/new (gerekirse), IP risk bazlı
+
+## Auth cookie
+- Refresh: yalnız `core/auth_cookies` (`set_refresh_cookie` / `clear_refresh_cookie` / `resolve_refresh_token`)
+- HttpOnly + Secure + `path=/auth` + `COOKIE_SAMESITE`; cookie’yi router’da elle `set_cookie` yok
+- Panel cookie refresh — `resolve_refresh_token` sırası
+
+## Alışkanlık
+- Mevcut DI, `api_schemas`, `pagination`, `http_helpers`, Redis manager/store kullan; paralel schema/DI/infra / sync persistence ekleme
+- Mapper gereksizse oluşturma; ORM model’i doğrudan expose etme
+- Mesajlar Türkçe; yalnız `AsyncSession`; blocking I/O yok
+- Uygun HTTP status + tutarlı error
+- N+1 / gereksiz round-trip yok; filtre/page DB’de; büyük listeyi RAM’e çekme
+- TX dar tut; idempotency yalnız retry/high-impact; premature cache yok (önce query/index)
+- ORM `select`/`where`; raw yalnız sabit SQL + bound param; f-string SQL yok
+- Feature eklerken mimariyi yeniden tasarlama; layer bypass / scope dışı refactor / `.env` commit yok

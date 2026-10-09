@@ -1,0 +1,53 @@
+---
+description: Agent / toolset / graph / prompt kuralları
+globs: src/ai/**/*.py
+alwaysApply: false
+---
+
+# Pydantic AI
+
+## Prompt
+
+- **Agent `instructions`**: yalnız rol + “Türkçe ve kısa cevap ver.”
+- **Toolset `instructions`**: hangi tool ne zaman
+- Aynı kuralı agent + toolset’e kopyalama
+
+```python
+# ✅ agent
+instructions='Sen bir … asistanısın. Türkçe ve kısa cevap ver.'
+
+# ✅ FunctionToolset
+instructions='X denirse tool_y kullan; numara sorma.'
+```
+
+## Prompt şişirme yok (zorunlu)
+
+Yeni istek = önce **kod** (validator, schema, tool, UI). Prompt son çare.
+
+- Zaten kodun zorunlu kıldığı şeyi `instructions` / Field `description`’a yazma
+- “Model yanlış yazmasın diye” diye agent promptuna paragraf ekleme → `output_validator` veya dar tool çıktısı
+- ❌ BAD: liste UI’da + validator adete indirgiyor, yine de “message’da yalnız adet…” prompta eklemek
+- ✅ GOOD: validator/schema/tool düzelt; agent metni kısa kalsın
+
+## Yeni uzman agent
+
+1. `ai/ai_schemas/<domain>.py` — reply modeli
+2. `ai/toolsets/<domain>.py` — `FunctionToolset` + tools (+ gerekirse `.approval_required`)
+3. `ai/validators/<domain>.py` — `output_validator` (`partial_output` skip)
+4. `ai/agents/<domain>.py` — `Agent(..., toolsets=[...])` + `output_validator`
+5. Router `Literal` + graph step + `SupportState` + `compose`
+6. Gerekirse `AppDeps`’e service ekle
+
+## Tool / bağlam
+
+- Göreli ifadeler (“son sipariş”) için ayrı tool; modele numara uydurtma
+- İzolasyon: `ctx.deps.user_id`
+- Native web search: `capabilities=[NativeTool(WebSearchTool())]` + `openai-responses:…`
+- Onay: `toolset.approval_required(policy)` → `runtime/approval.py`
+
+## Graph
+
+- Router: `order | payment | both | research`
+- Öncelik: research > both > order/payment
+- `compose` → `OrchestratorReply`
+- Hata: `runtime/errors.py` → `state.error` + Türkçe mesaj; stack/API detayı yok

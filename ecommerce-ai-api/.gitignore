@@ -1,0 +1,19 @@
+# Secrets
+.env
+.env.*
+!.env.example
+!.env.docker.example
+!tests/.env.example
+
+*.db
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.logfire/
+logs/
+!logs/.gitkeep
+tests/reports/*
+!tests/reports/.gitkeep

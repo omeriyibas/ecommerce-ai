@@ -1,0 +1,25 @@
+---
+description: Model, repository, service, seeder kalıpları
+globs: src/{models,repositories,services,mappers,api_schemas}/**/*.py,seeds/**/*.py
+alwaysApply: false
+---
+
+# Data layer
+
+## Service
+
+- AsyncSession alır; repo oluşturur
+- Dışarıya `api_schemas` response döner (`mapper` ile)
+- Yoksa `None` veya anlamlı hata; tool katmanı `ModelRetry` kullanır
+
+## Repository
+
+- SQLAlchemy async + `select`
+- Relationship lazımsa `selectinload`
+- Kullanıcıya özel sorgularda `user_id` filtrele
+
+## Seeder
+
+- Domain başına ayrı dosya; ortak `seeds/_common.py`
+- Sıra: products → orders → payments
+- Prod şema: Alembic (`alembic.mdc`); seed şema yaratmaz

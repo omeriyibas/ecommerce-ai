@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="520" viewBox="0 0 920 520" role="img" aria-label="Support graph ak1_1">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#334155"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      .box { fill: #f8fafc; stroke: #334155; stroke-width: 2; rx: 12; }
+      .box-start { fill: #ecfeff; stroke: #0e7490; }
+      .box-router { fill: #fef9c3; stroke: #a16207; }
+      .box-agent { fill: #eff6ff; stroke: #1d4ed8; }
+      .box-end { fill: #ecfdf5; stroke: #047857; }
+      .label { font-family: "Segoe UI", system-ui, sans-serif; font-size: 15px; fill: #0f172a; text-anchor: middle; }
+      .sub { font-family: "Segoe UI", system-ui, sans-serif; font-size: 12px; fill: #475569; text-anchor: middle; }
+      .edge { stroke: #334155; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .edge-label { font-family: "Segoe UI", system-ui, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle; }
+      .title { font-family: "Segoe UI", system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #0f172a; }
+    </style>
+  </defs>
+
+  <rect width="920" height="520" fill="#ffffff"/>
+  <text x="460" y="36" class="title" text-anchor="middle">Support graph  nas1l akar?</text>
+
+  <!-- Start -->
+  <rect class="box box-start" x="380" y="56" width="160" height="52" filter="url(#shadow)"/>
+  <text class="label" x="460" y="87">Soru</text>
+
+  <!-- Classify -->
+  <rect class="box box-router" x="350" y="140" width="220" height="58" filter="url(#shadow)"/>
+  <text class="label" x="460" y="165">classify</text>
+  <text class="sub" x="460" y="184">yönlendirici (router)</text>
+
+  <path class="edge" d="M460 108 L460 138"/>
+
+  <!-- Agents row -->
+  <rect class="box box-agent" x="40" y="280" width="160" height="58" filter="url(#shadow)"/>
+  <text class="label" x="120" y="305">run_order</text>
+  <text class="sub" x="120" y="324">sipari_</text>
+
+  <rect class="box box-agent" x="240" y="280" width="160" height="58" filter="url(#shadow)"/>
+  <text class="label" x="320" y="305">run_payment</text>
+  <text class="sub" x="320" y="324">ödeme</text>
+
+  <rect class="box box-agent" x="440" y="280" width="180" height="58" filter="url(#shadow)"/>
+  <text class="label" x="530" y="305">run_order ’ payment</text>
+  <text class="sub" x="530" y="324">both</text>
+
+  <rect class="box box-agent" x="680" y="280" width="180" height="58" filter="url(#shadow)"/>
+  <text class="label" x="770" y="305">run_research</text>
+  <text class="sub" x="770" y="324">stream + web</text>
+
+  <!-- Edges from classify -->
+  <path class="edge" d="M360 198 Q200 240 120 278"/>
+  <text class="edge-label" x="200" y="230">order</text>
+
+  <path class="edge" d="M420 198 Q360 240 320 278"/>
+  <text class="edge-label" x="350" y="245">payment</text>
+
+  <path class="edge" d="M500 198 Q520 240 530 278"/>
+  <text class="edge-label" x="545" y="245">both</text>
+
+  <path class="edge" d="M560 198 Q700 240 770 278"/>
+  <text class="edge-label" x="700" y="230">research</text>
+
+  <!-- Compose -->
+  <rect class="box box-end" x="350" y="390" width="220" height="52" filter="url(#shadow)"/>
+  <text class="label" x="460" y="421">compose ’ Cevap</text>
+
+  <path class="edge" d="M120 338 L120 370 Q120 400 350 416"/>
+  <path class="edge" d="M320 338 L320 370 Q320 400 350 416"/>
+  <path class="edge" d="M530 338 L530 388"/>
+  <path class="edge" d="M770 338 L770 370 Q770 400 570 416"/>
+
+  <text class="sub" x="460" y="490">src/ai/graph/support.py · support_workflow</text>
+</svg>

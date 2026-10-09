@@ -1,0 +1,36 @@
+# Secrets
+.env
+.env.*
+!.env.example
+!.env.docker.example
+!**/tests/.env.example
+
+# Nested repo metadata (yerelde ayrı remote kalsın; monorepo’ya girmez)
+ecommerce-ai-api/.git.__monorepo_aside__/
+ecommerce-ai-panel/.git.__monorepo_aside__/
+
+# API
+ecommerce-ai-api/.venv/
+ecommerce-ai-api/__pycache__/
+ecommerce-ai-api/**/__pycache__/
+ecommerce-ai-api/*.db
+ecommerce-ai-api/.pytest_cache/
+ecommerce-ai-api/.mypy_cache/
+ecommerce-ai-api/.ruff_cache/
+ecommerce-ai-api/.logfire/
+ecommerce-ai-api/logs/
+ecommerce-ai-api/tests/reports/
+
+# Panel
+ecommerce-ai-panel/node_modules/
+ecommerce-ai-panel/dist/
+ecommerce-ai-panel/dist-ssr/
+ecommerce-ai-panel/*.local
+ecommerce-ai-panel/.idea/
+ecommerce-ai-panel/.vscode/*
+!ecommerce-ai-panel/.vscode/extensions.json
+
+# OS / editor
+.DS_Store
+.idea/
+*.log

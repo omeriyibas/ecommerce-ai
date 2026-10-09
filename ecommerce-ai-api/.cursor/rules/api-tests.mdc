@@ -1,0 +1,16 @@
+---
+description: API pytest convention
+globs: tests/**/*.py,**/test_*.py
+alwaysApply: false
+---
+
+# API tests
+
+- Framework: pytest + TestClient; yeni runner/stack yok
+- Yerleşim:
+  - saf mantık → `tests/unit/`
+  - HTTP / DB / Redis / S3 → `tests/integration/` + `pytestmark = pytest.mark.integration`
+- Env: yalnız `tests/.env` (`conftest`); kök `.env` kullanma
+- Ortak HTTP bootstrap: `tests/helpers.py` — aynı login/admin helper’ı tekrar yazma
+- S3: erişim yoksa `require_s3` ile skip; sahte S3 mock katmanı uydurma
+- Koşu (onay sonrası): API kökünden `./scripts/test.sh` veya `./scripts/test.sh tests/unit -q`

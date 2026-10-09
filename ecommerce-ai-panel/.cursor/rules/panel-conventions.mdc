@@ -1,0 +1,21 @@
+---
+description: Panel mimari ve auth kuralları
+globs: src/**/*
+alwaysApply: false
+---
+
+# Panel
+
+`features/` UI+hooks · `shared/` UI/auth/api · `providers/` router/query/redux(UI) · `services/` HTTP · `pages/` ince.
+
+## State / auth
+- Server → React Query; auth → `authStore` + `useAuth`; Redux yalnız UI (auth/user yok)
+- Access: memory only; refresh: HttpOnly cookie + `withCredentials`; user persist yok → `/auth/me`
+- `rememberMe` → `remember_me` (kalıcı vs session cookie)
+- Boot: `bootstrapSession` → cookie refresh → access → `fetchUser` (`initialLoading`)
+- Guard: `requireRoles` (loading early-return yok); logout: memory + `queryClient.clear` + `/login`; bridge: `auth-bridge`
+- Refresh: `POST /auth/refresh` credentials; body’de refresh yok; catch’te `error.message`
+
+## Router
+- `createRouter` bir kez (module); `RouterProvider context={{ user }}`; `routes.config` + factory + `requireRoles`
+- Roller: `user` | `admin` (admin bypass). Router’ı render’da yeniden yaratma; empty catch’e yorum koy

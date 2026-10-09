@@ -1,0 +1,13 @@
+---
+description: get_settings — module-level tercih, çağrı anı istisnası
+globs: src/core/**/*.py
+alwaysApply: false
+---
+
+# Settings
+
+`get_settings()` lru_cache’li. Sabit config → dosya başında `settings = get_settings()`.  
+Flag/limit gibi request anında güncel değer → fonksiyon içinde çağır.
+
+- `cache_clear()` module-level `settings` referansını yenilemez
+- Engine/startup/`main` module-level; list cache TTL → `redis.mdc`

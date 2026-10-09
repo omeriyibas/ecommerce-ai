@@ -1,0 +1,15 @@
+---
+description: UI — design system, state, effect, a11y
+globs: src/**/*.{tsx,ts,css}
+alwaysApply: false
+---
+
+# UI
+
+- Mevcut design system / token; önce mevcut component
+- One-off / davranışsız wrapper yok; bölünme gerçek sorumluluğa göre
+- State ihtiyaca yakın; server state’i client’a kopyalama; derived’ı state’e saklama
+- Server data → React Query; Redux yalnız UI
+- `useEffect` yalnız side-effect/sync; listener/timer cleanup
+- UI state: loading / empty / error / disabled / success / permission-denied (gerektiğinde)
+- Responsive + semantic HTML; keyboard / label / focus / contrast; gereksiz ARIA / animasyon yok
