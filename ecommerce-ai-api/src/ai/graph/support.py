@@ -15,6 +15,7 @@ from pydantic_graph import GraphBuilder, StepContext, TypeExpression
 
 from ai.agents.order import order_agent
 from ai.agents.payment import payment_agent
+from ai.agents.rag import get_rag_agent
 from ai.agents.research import research_agent
 from ai.agents.router import router_agent
 from ai.ai_schemas.orchestrator import OrchestratorReply
@@ -114,7 +115,7 @@ def _is_general_greeting(text: str) -> bool:
 async def classify(
     ctx: StepContext[SupportState, AppDeps, str],
 ) -> str:
-    """Soruyu order / payment / both / research / general olarak sınıflandırır."""
+    """Soruyu order / payment / both / research / rag / general olarak sınıflandırır."""
     ctx.state.question = ctx.inputs
     # Takip mesajlarında ("2 numaralı" vb.) heuristic atlanır
     if not ctx.state.message_history and _is_general_greeting(ctx.state.question):
@@ -248,6 +249,35 @@ async def run_research(
 
 
 @g.step
+async def run_rag(
+    ctx: StepContext[SupportState, AppDeps, str],
+) -> str:
+    """Mağaza belgesi (hybrid RAG) agent'ı."""
+    from ai.ai_schemas.rag import AssistantReply
+
+    try:
+        if ctx.deps.rag_index is None:
+            ctx.state.rag_reply = AssistantReply(
+                answer=(
+                    "Bu sohbet için mağaza belgesi yüklenmemiş. "
+                    "Önce PDF ingest edin (cli_rag.py)."
+                )
+            )
+            return "rag_done"
+
+        result = await run_with_iter(
+            get_rag_agent(),
+            ctx.state.question,
+            deps=ctx.deps,
+            message_history=ctx.state.message_history or None,
+        )
+        ctx.state.rag_reply = result.output
+    except RecoverableError as exc:
+        record_step_error(ctx.state, exc, step="RAG")
+    return "rag_done"
+
+
+@g.step
 async def compose(
     ctx: StepContext[SupportState, AppDeps, str],
 ) -> OrchestratorReply:
@@ -266,6 +296,9 @@ async def compose(
             parts.append(
                 "Kaynaklar: " + ", ".join(ctx.state.research_reply.sources)
             )
+
+    if ctx.state.rag_reply is not None:
+        parts.append(ctx.state.rag_reply.answer)
 
     if ctx.state.general_message:
         parts.append(ctx.state.general_message)
@@ -324,6 +357,12 @@ g.add(
         .branch(
             g.match(
                 TypeExpression[str],
+                matches=lambda route: route == "rag",
+            ).to(run_rag)
+        )
+        .branch(
+            g.match(
+                TypeExpression[str],
                 matches=lambda route: route == "general",
             ).to(run_general)
         )
@@ -351,6 +390,7 @@ g.add(
     ),
     g.edge_from(run_payment).to(compose),
     g.edge_from(run_research).to(compose),
+    g.edge_from(run_rag).to(compose),
     g.edge_from(run_general).to(compose),
     g.edge_from(compose).to(g.end_node),
 )

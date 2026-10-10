@@ -99,6 +99,15 @@ class Settings(BaseSettings):
     AGENT_ITER_LOG: bool = True
     DEFAULT_USER_ID: int = Field(default=15, ge=1)
 
+    # --- RAG ---
+    EMBEDDER_MODEL: str = "openai:text-embedding-3-small"
+    RERANKER_MODEL: str = "ms-marco-MultiBERT-L-12"
+    EMBEDDING_DIM: int = Field(default=1536, ge=1)
+    FLASHRANK_CACHE_DIR: str = str(_PROJECT_ROOT / ".flashrank_cache")
+    RAG_PDF_PATH: str = str(
+        _PROJECT_ROOT / "data" / "magic_store_ornek_rag.pdf"
+    )
+
     # Observability (Logfire)
     LOGFIRE_ENABLED: bool = True
     LOGFIRE_TOKEN: str | None = None

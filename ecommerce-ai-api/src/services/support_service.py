@@ -28,6 +28,7 @@ from services.conversation_service import ConversationService
 from services.order_service import OrderService
 from services.payment_service import PaymentService
 from services.product_service import ProductService
+from services.rag_service import RagService
 
 logger = logging.getLogger(__name__)
 
@@ -193,11 +194,27 @@ class SupportService:
 
         history = await self._conversations.load_history(conv_id)
 
+        customer_id = str(user_id)
+        rag_service = RagService(self._db)
+        rag_index = None
+        try:
+            if await rag_service.repo.count_chunks_for_customer(customer_id) > 0:
+                rag_index = await rag_service.load_index(customer_id)
+        except Exception:
+            logger.warning(
+                "[support] rag index yüklenemedi user_id=%s",
+                user_id,
+                exc_info=True,
+            )
+
         deps = AppDeps(
             order_service=OrderService(self._db),
             payment_service=PaymentService(self._db),
             product_service=ProductService(self._db),
             user_id=user_id,
+            customer_id=customer_id,
+            rag_service=rag_service,
+            rag_index=rag_index,
             defer_approvals=True,
         )
         state = SupportState(message_history=list(history))

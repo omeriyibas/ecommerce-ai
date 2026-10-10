@@ -63,6 +63,7 @@ async def init_models(*, create: bool | None = None) -> None:
     """
     from models import auth as _auth  # noqa: F401
     from models import conversation as _conversation  # noqa: F401
+    from models import document as _document  # noqa: F401
     from models import order as _order  # noqa: F401
     from models import payment as _payment  # noqa: F401
     from models import product as _product  # noqa: F401

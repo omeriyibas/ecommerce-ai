@@ -4,7 +4,7 @@ from api_schemas.support_views import OrderChoice, PaymentStatusView
 
 
 class PaymentReply(BaseModel):
-    message: str = Field(description="Türkçe kısa yanıt; listeyi satır satır yazma")
+    message: str = Field(description="Türkçe kısa yanıt")
     items: list[PaymentStatusView] = Field(
         default_factory=list,
         description="list_payment_statuses sonucu; değilse boş",

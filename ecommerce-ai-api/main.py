@@ -23,7 +23,7 @@ from core.lifespan import lifespan  # noqa: E402
 from core.logging_config import setup_logging  # noqa: E402
 from core.test_api_delay_middleware import TestApiDelayMiddleware  # noqa: E402
 from infrastructure.managers.redis_manager import redis_manager  # noqa: E402
-from routers import auth, order, payment, product, support, user  # noqa: E402
+from routers import auth, document, order, payment, product, support, user  # noqa: E402
 
 _settings = get_settings()
 setup_logging()
@@ -46,6 +46,7 @@ app.include_router(user.router)
 app.include_router(product.router)
 app.include_router(order.router)
 app.include_router(payment.router)
+app.include_router(document.router)
 app.include_router(support.router)
 
 

@@ -1,11 +1,11 @@
 # ecommerce-ai
 
-Sipariş ve ödeme için AI destek asistanı. Panelden yazıyorsun; sistem doğru uzmana yolluyor. İptal ve ödeme otomatik olmaz — **Onaylar** sayfasından geçer.
+Sipariş, ödeme ve mağaza belgeleri için AI destek asistanı. Panelden yazıyorsun; sistem doğru uzmana yolluyor. İptal ve ödeme otomatik olmaz — **Onaylar** sayfasından geçer.
 
 | Klasör | Ne |
 |--------|-----|
-| `ecommerce-ai-api` | FastAPI, AI graph, Postgres, Redis |
-| `ecommerce-ai-panel` | Destek sohbeti, Onaylar, ürün/sipariş/ödeme CRUD |
+| `ecommerce-ai-api` | FastAPI, AI graph, RAG, Postgres, Redis |
+| `ecommerce-ai-panel` | Destek, Onaylar, Belgeler, ürün/sipariş/ödeme |
 
 Ana dizini GitHub’a (`.env` ignore): `./scripts/github-push.sh`  
 Alt klasörlerin kendi remote’ları bozulmaz.
@@ -14,11 +14,12 @@ Alt klasörlerin kendi remote’ları bozulmaz.
 
 ## Nasıl çalışır?
 
-1. Mesaj gelir (“Siparişlerimi göster”, “3 numaralıyı öde”, “Son ürünü araştır”).
-2. Yönlendirici seçer: genel / sipariş / ödeme / ikisi / araştırma.
+1. Mesaj gelir (“Siparişlerimi göster”, “İade politikası?”, “Son ürünü araştır”).
+2. Yönlendirici seçer: genel / sipariş / ödeme / ikisi / araştırma / rag (belge).
 3. Uzman tool kullanır; uydurma yok.
-4. Liste varsa metinde yalnız **adet** yazılır; ürün ve tutar panel listesinde çıkar.
+4. Liste varsa metinde yalnız **adet** yazılır; detay panel listesinde.
 5. İptal veya ödeme → Onaylar’da Onayla / Reddet.
+6. Belge soruları → yüklenmiş PDF’lerde hybrid RAG (dense + BM25 + rerank).
 
 ```
 Soru → yönlendir → uzman → birleştir → cevap
@@ -35,7 +36,7 @@ Soru → yönlendir → uzman → birleştir → cevap
 | Siparişi iptal et | Onay sonrası iptal |
 | Siparişi öde | Onay sonrası `paid` |
 
-Listeleme ve durum sorma onay istemez.
+Listeleme, durum ve belge arama onay istemez.
 
 ---
 
@@ -45,6 +46,7 @@ Listeleme ve durum sorma onay istemez.
 - Ödemelerimi listele
 - 3 numaralı siparişimin ödemesini yap → Onaylar
 - 3 numaralı siparişimi iptal et → Onaylar
+- İade politikanız nedir? → RAG (Belgeler’de PDF gerekir)
 - Son siparişimdeki ürünü araştır
 - Merhaba (araştırmaya düşmez)
 
@@ -77,6 +79,22 @@ uv run alembic upgrade head
 
 CLI: `uv run python cli.py` (`.env` → `DEFAULT_USER_ID`).
 
+### RAG / belgeler
+
+1. Migration: `uv run alembic upgrade head`
+2. Panel **Belgeler** (`/belgeler`) → PDF yükle (tür: iade, kargo, …)  
+   veya CLI: `uv run python cli_rag.py`
+3. Destek sohbetinde belge sorusu → `rag` route  
+   `customer_id = user_id`; belge yoksa kısa uyarı.
+
+### Testler
+
+```bash
+cd ecommerce-ai-api
+./tests/ai/run_tests.sh          # unit: router, order, payment, rag, validator (LLM yok)
+./tests/ai/run_tests.sh --eval   # router eval (gerçek LLM, .env)
+```
+
 ### Panel
 
 ```bash
@@ -85,13 +103,13 @@ pnpm install
 pnpm dev
 ```
 
-API’ye JWT ile bağlanır.
+API’ye JWT ile bağlanır. Menü: Ürünler, Siparişler, Ödemeler, **Belgeler**, Destek, Onaylar.
 
 ---
 
 ## Kısa kurallar
 
-- Her kullanıcı yalnız kendi verisini görür
+- Her kullanıcı yalnız kendi verisini / belgelerini görür
 - Belirsiz siparişte listele ve sor; geçmişte seçim varsa tekrar listeleme
 - Liste detayı panelde; sohbet metninde satır satır döküm yok
 - Cevaplar Türkçe ve kısa

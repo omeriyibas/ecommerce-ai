@@ -4,6 +4,7 @@ import type { SearchSchemaInput } from "@tanstack/react-router"
 import {
   CheckSquare,
   CreditCard,
+  FileText,
   Home,
   MessageCircle,
   Package,
@@ -16,6 +17,7 @@ const UsersPage = lazy(() => import("@/pages/UsersPage"))
 const ProductsPage = lazy(() => import("@/pages/ProductsPage"))
 const OrdersPage = lazy(() => import("@/pages/OrdersPage"))
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"))
+const DocumentsPage = lazy(() => import("@/pages/DocumentsPage"))
 const SupportChatPage = lazy(() => import("@/pages/SupportChatPage"))
 const ApprovalsPage = lazy(() => import("@/pages/ApprovalsPage"))
 const LoginPage = lazy(() => import("@/pages/LoginPage"))
@@ -98,6 +100,14 @@ export const routesAndMenuItems: RoutesAndMenuItems = [
     showInNav: true,
     roles: ["admin", "user"],
     icon: CreditCard,
+  },
+  {
+    label: "Belgeler",
+    path: "/belgeler",
+    pageComponent: DocumentsPage,
+    showInNav: true,
+    roles: ["admin", "user"],
+    icon: FileText,
   },
   {
     label: "Destek",

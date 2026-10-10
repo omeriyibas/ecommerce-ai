@@ -47,7 +47,8 @@ Yeni istek = önce **kod** (validator, schema, tool, UI). Prompt son çare.
 
 ## Graph
 
-- Router: `order | payment | both | research`
-- Öncelik: research > both > order/payment
+- Router: `order | payment | both | research | rag | general`
+- Öncelik: research > both > order/payment; belge/politika → `rag`
 - `compose` → `OrchestratorReply`
 - Hata: `runtime/errors.py` → `state.error` + Türkçe mesaj; stack/API detayı yok
+- RAG: `RagService` + `rag_toolset` / `customer_id`; ingest → `cli_rag.py`

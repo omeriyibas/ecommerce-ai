@@ -19,6 +19,13 @@ dependencies = [
     "boto3",
     "python-multipart",
     "prometheus-fastapi-instrumentator>=8.1.0",
+    "chonkie>=1.7.0",
+    "flashrank>=0.2.10",
+    "numpy>=2.2.6",
+    # flashrank -> onnxruntime; 1.24+ Python 3.10 wheel yayınlamıyor
+    "onnxruntime>=1.19,<1.24",
+    "pypdf>=6.20.0",
+    "rank-bm25>=0.2.2",
 ]
 
 [dependency-groups]
