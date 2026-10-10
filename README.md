@@ -22,10 +22,11 @@ Alt klasörlerin kendi remote’ları bozulmaz.
 6. Belge soruları → yüklenmiş PDF’lerde hybrid RAG (dense + BM25 + rerank).
 
 ```
-Soru → yönlendir → uzman → birleştir → cevap
+Soru → classify → uzman(lar) → compose → cevap
 ```
 
-![Akış](ecommerce-ai-api/docs/graph-flow.svg)
+![Support graph](ecommerce-ai-api/docs/graph-flow.svg)
+
 
 ---
 
@@ -62,9 +63,6 @@ uv sync
 cp .env.example .env   # OPENAI_API_KEY, DATABASE_URL, …
 uv run alembic upgrade head
 
-uv run python seeds/seed_products.py
-uv run python seeds/seed_orders.py
-uv run python seeds/seed_payments.py
 
 uv run python main.py
 # veya: ./scripts/run.sh
@@ -79,13 +77,13 @@ uv run alembic upgrade head
 
 CLI: `uv run python cli.py` (`.env` → `DEFAULT_USER_ID`).
 
-### RAG / belgeler
+### Belgeler (RAG)
 
-1. Migration: `uv run alembic upgrade head`
-2. Panel **Belgeler** (`/belgeler`) → PDF yükle (tür: iade, kargo, …)  
-   veya CLI: `uv run python cli_rag.py`
-3. Destek sohbetinde belge sorusu → `rag` route  
-   `customer_id = user_id`; belge yoksa kısa uyarı.
+Panelde **Belgeler** sayfasından PDF yükle (iade, kargo, garanti…).  
+Destek sohbetinde “İade politikası?” gibi sorular bu belgelerden cevaplanır.  
+Her kullanıcı yalnız kendi yüklediği dosyaları görür; belge yoksa asistan uyarır.
+
+İsteğe bağlı CLI: `uv run python cli_rag.py`
 
 ### Testler
 
