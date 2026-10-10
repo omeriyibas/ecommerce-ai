@@ -48,6 +48,7 @@ Yeni istek = önce **kod** (validator, schema, tool, UI). Prompt son çare.
 ## Graph
 
 - Router: `order | payment | both | research | rag | general`
+- Classify: `FallbackModel("typesafe:jev-latest", LLM)` (key yoksa LLM); `decision_route_threshold`
 - Öncelik: research > both > order/payment; belge/politika → `rag`
 - `compose` → `OrchestratorReply`
 - Hata: `runtime/errors.py` → `state.error` + Türkçe mesaj; stack/API detayı yok

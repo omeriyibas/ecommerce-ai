@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-from typing import get_args
-
 from pydantic_ai.models.test import TestModel
 
-from ai.agents.router import Route, router_agent
+from ai.agents.router import SupportRoute, router_agent
 
-_ROUTES = set(get_args(Route))
+_ROUTES = set(SupportRoute)
 
 
 def test_router_runs():
@@ -19,12 +17,13 @@ def test_router_runs():
     assert result.output in _ROUTES
 
 
-def test_router_output_is_route_literal():
+def test_router_output_is_support_route():
     with router_agent.override(model=TestModel()):
         result = router_agent.run_sync("Merhaba")
 
+    assert isinstance(result.output, SupportRoute)
     assert result.output in _ROUTES
 
 
 def test_router_includes_rag_route():
-    assert "rag" in _ROUTES
+    assert SupportRoute.rag in _ROUTES

@@ -32,7 +32,8 @@ from ai.agents.router import router_agent
 
 def classify(message: str) -> str:
     result = router_agent.run_sync(message)
-    return result.output
+    out = result.output
+    return out.value if hasattr(out, "value") else str(out)
 
 
 dataset = Dataset(

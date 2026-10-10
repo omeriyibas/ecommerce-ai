@@ -955,12 +955,13 @@ dependencies = [
     { name = "fastapi" },
     { name = "flashrank" },
     { name = "greenlet" },
+    { name = "httpx" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "onnxruntime" },
     { name = "prometheus-fastapi-instrumentator" },
-    { name = "pydantic-ai" },
+    { name = "pydantic-ai", extra = ["typesafe"] },
     { name = "pydantic-settings" },
     { name = "pyjwt" },
     { name = "pypdf" },
@@ -994,10 +995,11 @@ requires-dist = [
     { name = "fastapi" },
     { name = "flashrank", specifier = ">=0.2.10" },
     { name = "greenlet" },
+    { name = "httpx", specifier = ">=0.27" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "onnxruntime", specifier = ">=1.19,<1.24" },
     { name = "prometheus-fastapi-instrumentator", specifier = ">=8.1.0" },
-    { name = "pydantic-ai", specifier = "==2.54.0" },
+    { name = "pydantic-ai", extras = ["typesafe"], specifier = "==2.54.0" },
     { name = "pydantic-settings" },
     { name = "pyjwt" },
     { name = "pypdf", specifier = ">=6.20.0" },
@@ -2555,6 +2557,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5d/74/92ebc5f809e1791bc909dc04fb032a885c1e2f32ab69ce6ee9d661d68eaf/pydantic_ai-2.54.0-py3-none-any.whl", hash = "sha256:c69ad15501e49a8584ce24bc89c4fa7bd67e15a8294fbeb28e3d017fe6480119", size = 10154, upload-time = "2026-10-03T03:38:33.763Z" },
 ]
 
+[package.optional-dependencies]
+typesafe = [
+    { name = "pydantic-ai-slim", extra = ["typesafe"] },
+]
+
 [[package]]
 name = "pydantic-ai-slim"
 version = "2.54.0"
@@ -2603,6 +2610,9 @@ mcp = [
 openai = [
     { name = "openai" },
     { name = "tiktoken" },
+]
+typesafe = [
+    { name = "typesafe-sdk" },
 ]
 web = [
     { name = "starlette" },
@@ -3957,6 +3967,24 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/53/a3/1585216310e344e8102c22482f6060c7a6ea0322b63e026372e6dcefcfd6/truststore-0.10.4.tar.gz", hash = "sha256:9d91bd436463ad5e4ee4aba766628dd6cd7010cf3e2461756b3303710eebc301", size = 26169, upload-time = "2025-08-12T18:49:02.73Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/19/97/56608b2249fe206a67cd573bc93cd9896e1efb9e98bce9c163bcdc704b88/truststore-0.10.4-py3-none-any.whl", hash = "sha256:adaeaecf1cbb5f4de3b1959b42d41f6fab57b2b1666adb59e89cb0b53361d981", size = 18660, upload-time = "2025-08-12T18:49:01.46Z" },
+]
+
+[[package]]
+name = "typesafe-sdk"
+version = "0.7.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx2" },
+    { name = "packaging" },
+    { name = "pydantic" },
+    { name = "pydantic-core" },
+    { name = "tenacity" },
+    { name = "truststore", marker = "sys_platform != 'emscripten'" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/94/12/3a897e9f424be6f4db0648a955f8fadbe62149d118a03614df897b5a2ec9/typesafe_sdk-0.7.4.tar.gz", hash = "sha256:a20dca217a746db1ac5534ac502de16e1f86a400b4ec09f8594e6221c2bc9558", size = 24388, upload-time = "2026-10-09T15:47:14.978Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a2/49/6cd65684e41e25069f4d12c09cd7e1e3f81477f06acb29bf0d1815e27d1e/typesafe_sdk-0.7.4-py3-none-any.whl", hash = "sha256:61cf3f2fe9da20b68c3d3fe2fb76bbb2f35f8c4a9a65a6b81c43a535d2a53210", size = 37700, upload-time = "2026-10-09T15:47:12.418Z" },
 ]
 
 [[package]]

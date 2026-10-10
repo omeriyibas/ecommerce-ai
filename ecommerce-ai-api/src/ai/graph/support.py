@@ -132,10 +132,10 @@ async def classify(
         record_step_error(ctx.state, exc, step="Yönlendirme")
         ctx.state.route = "error"
         return "error"
-    route = result.output
-    ctx.state.route = route
-    ctx.state.notes.append(f"route={route}")
-    return route
+    route_value = result.output.value
+    ctx.state.route = route_value
+    ctx.state.notes.append(f"route={route_value}")
+    return route_value
 
 
 @g.step

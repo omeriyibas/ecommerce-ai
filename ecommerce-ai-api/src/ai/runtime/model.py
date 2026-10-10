@@ -30,6 +30,15 @@ def build_model(model_name: str | None = None) -> str | Model:
     return primary
 
 
+def build_router_model() -> str | Model:
+    """`typesafe:jev-…` + LLM FallbackModel; key yoksa LLM."""
+    settings = get_settings()
+    llm = build_model()
+    if not (settings.TYPESAFE_API_KEY or "").strip():
+        return llm
+    return FallbackModel(settings.TYPESAFE_MODEL, llm)
+
+
 def build_model_settings(
     *,
     temperature: float | None = None,

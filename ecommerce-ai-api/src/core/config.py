@@ -99,6 +99,13 @@ class Settings(BaseSettings):
     AGENT_ITER_LOG: bool = True
     DEFAULT_USER_ID: int = Field(default=15, ge=1)
 
+    # --- TypeSafe AI (Jev) — router kararları ---
+    #: Boş = yalnız LLM; doluysa FallbackModel(Jev, LLM)
+    TYPESAFE_API_KEY: str | None = None
+    TYPESAFE_MODEL: str = "typesafe:jev-latest"
+    #: decision_route_threshold — altındaysa FallbackModel LLM’e düşer
+    TYPESAFE_ROUTER_MIN_CONFIDENCE: float = Field(default=0.55, ge=0.0, le=1.0)
+
     # --- RAG ---
     EMBEDDER_MODEL: str = "openai:text-embedding-3-small"
     RERANKER_MODEL: str = "ms-marco-MultiBERT-L-12"
@@ -125,6 +132,7 @@ class Settings(BaseSettings):
         "AGENT_THINKING",
         "LOGFIRE_TOKEN",
         "LOGFIRE_ENVIRONMENT",
+        "TYPESAFE_API_KEY",
         mode="before",
     )
     @classmethod
